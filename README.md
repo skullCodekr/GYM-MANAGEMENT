@@ -10,5 +10,6 @@ Tech Stack:
 
 \- MySQL
 
+⚠️ Note: This project is currently under development. Core features are being added.
 
 

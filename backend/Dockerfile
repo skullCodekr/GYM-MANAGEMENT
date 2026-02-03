@@ -1,14 +1,14 @@
-# ===== Use OpenJDK 17 =====
-FROM openjdk:17-jdk-slim
+# ===== Java 17 (Render-safe) =====
+FROM amazoncorretto:17-alpine
 
-# ===== Set working directory =====
+# ===== Working directory =====
 WORKDIR /app
 
-# ===== Copy Maven build JAR =====
+# ===== Copy Spring Boot JAR =====
 COPY target/*.jar app.jar
 
-# ===== Expose port for Render =====
+# ===== Expose port =====
 EXPOSE 8080
 
-# ===== Run the Spring Boot app =====
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+# ===== Run application =====
+ENTRYPOINT ["java", "-jar", "app.jar"]

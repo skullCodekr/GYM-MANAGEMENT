@@ -1,5 +1,5 @@
 # ===== Use OpenJDK 17 =====
-FROM openjdk:17.0.8-jdk-slim-bullseye
+FROM openjdk:17-jdk-slim
 
 # ===== Set working directory =====
 WORKDIR /app

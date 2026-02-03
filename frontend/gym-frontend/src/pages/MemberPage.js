@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const MembersPage = () => {
   const [members, setMembers] = useState([]);
@@ -10,6 +11,7 @@ const MembersPage = () => {
   });
 
   const [editMember, setEditMember] = useState(null);
+  const navigate = useNavigate();
 
   const API = "http://localhost:8080/api/members";
 
@@ -41,17 +43,14 @@ const MembersPage = () => {
       setNewMember({ name: "", email: "", phone: "" });
     } catch (err) {
       console.log("Backend error detail:", err);
-
       if (err.response && typeof err.response.data === "string") {
         alert(err.response.data);
         return;
       }
-
       if (err.response && err.response.data && err.response.data.message) {
         alert(err.response.data.message);
         return;
       }
-
       alert(err.message || "Something went wrong!");
     }
   };
@@ -76,7 +75,7 @@ const MembersPage = () => {
       loadMembers();
     } catch (err) {
       if (err.response) {
-        alert(err.response.data); // SAME error as console
+        alert(err.response.data);
       } else {
         alert(err.message);
       }
@@ -134,8 +133,21 @@ const MembersPage = () => {
                 <td>{m.email}</td>
                 <td>{m.phone}</td>
                 <td>
-                  <button onClick={() => setEditMember(m)}>Edit</button>
-                  <button onClick={() => deleteMember(m.id)}>Delete</button>
+                  <button
+                    style={{ marginRight: "1px" }}
+                    onClick={() => setEditMember(m)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    style={{ marginRight: "1px" }}
+                    onClick={() => deleteMember(m.id)}
+                  >
+                    Delete
+                  </button>
+                  <button onClick={() => navigate(`/members/${m.id}`)}>
+                    View Details
+                  </button>
                 </td>
               </tr>
             ))}

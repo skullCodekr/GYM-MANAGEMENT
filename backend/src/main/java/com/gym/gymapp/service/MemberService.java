@@ -21,6 +21,7 @@ public class MemberService {
     // UPDATE MEMBER WITH EXPIRY LOGIC
     // ========================
     public Member updateMember(Long id, Member updated) {
+
         // Fetch member safely
         Optional<Member> opt = memberRepository.findById(id);
         if (!opt.isPresent()) {
@@ -32,7 +33,12 @@ public class MemberService {
         if (updated.getName() != null) member.setName(updated.getName());
         if (updated.getEmail() != null) member.setEmail(updated.getEmail());
         if (updated.getPhone() != null) member.setPhone(updated.getPhone());
-        if (updated.getPhotoUrl() != null) member.setPhotoUrl(updated.getPhotoUrl());
+
+        // 🔥 FIXED PART (PHOTO ISSUE)
+        if (updated.getPhotoUrl() != null && !updated.getPhotoUrl().isBlank()) {
+            member.setPhotoUrl(updated.getPhotoUrl());
+        }
+
         if (updated.getJoiningDate() != null) member.setJoiningDate(updated.getJoiningDate());
         if (updated.getDuration() != null) member.setDuration(updated.getDuration());
         if (updated.getFee() != null) member.setFee(updated.getFee());

@@ -6,13 +6,13 @@ import com.gym.gymapp.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/members")
-@CrossOrigin(origins = "*")
 public class MemberController {
 
     @Autowired
@@ -21,17 +21,11 @@ public class MemberController {
     @Autowired
     private MemberService memberService;
 
-    // ========================
-    // GET ALL MEMBERS
-    // ========================
     @GetMapping
     public List<Member> getAllMembers() {
         return memberRepo.findAll();
     }
 
-    // ========================
-    // GET MEMBER BY ID
-    // ========================
     @GetMapping("/{id}")
     public ResponseEntity<?> getMemberById(@PathVariable Long id) {
         Optional<Member> opt = memberRepo.findById(id);
@@ -41,28 +35,22 @@ public class MemberController {
         return ResponseEntity.status(404).body("Member not found");
     }
 
-    // ========================
-    // ADD MEMBER
-    // ========================
     @PostMapping
-    public Member addMember(@RequestBody Member member) {
-
-        if (member.getFeeStatus() == null) {
-            member.setFeeStatus("DUE");
-        }
-
-        if (member.getFee() == null) {
-            member.setFee(0.0);
-        }
-
+    public Member addMember(
+            @RequestParam("name") String name,
+            @RequestParam("email") String email,
+            @RequestParam("phone") String phone
+    ) {
+        Member member = new Member();
+        member.setName(name);
+        member.setEmail(email);
+        member.setPhone(phone);
+        member.setFeeStatus("DUE");
+        member.setFee(0.0);
         member.setReminderSent(false);
-
         return memberRepo.save(member);
     }
 
-    // ========================
-    // UPDATE MEMBER
-    // ========================
     @PutMapping("/{id}")
     public ResponseEntity<?> updateMember(
             @PathVariable Long id,
@@ -76,18 +64,13 @@ public class MemberController {
         }
     }
 
-    // ========================
-    // DELETE MEMBER
-    // ========================
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteMember(@PathVariable Long id) {
         Optional<Member> opt = memberRepo.findById(id);
         if (!opt.isPresent()) {
             return ResponseEntity.status(404).body("Member not found");
         }
-
         memberRepo.deleteById(id);
         return ResponseEntity.ok("Member deleted");
     }
 }
-

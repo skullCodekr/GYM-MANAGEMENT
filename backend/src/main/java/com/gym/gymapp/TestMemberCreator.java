@@ -3,14 +3,14 @@ package com.gym.gymapp;
 import com.gym.gymapp.model.Member;
 import com.gym.gymapp.repository.MemberRepository;
 import com.gym.gymapp.service.EmailService;
-import org.springframework.boot.CommandLineRunner;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Component
-public class TestMemberCreator implements CommandLineRunner {
+public class TestMemberCreator {
 
     private final MemberRepository memberRepository;
     private final EmailService mailService;
@@ -20,16 +20,15 @@ public class TestMemberCreator implements CommandLineRunner {
         this.mailService = mailService;
     }
 
-    @Override
-    public void run(String... args) {
-        String testEmail = "mokshame2002@gmail.com";
+    public void sendTestMemberEmail() {
+        String testEmail = "yadavvaibhav965@gmail.com";
 
-        // Find all members with this email to avoid NonUniqueResultException
+        // Avoid duplicates
         List<Member> members = memberRepository.findAllByEmail(testEmail);
 
         Member member;
         if (members.isEmpty()) {
-            // No member exists → create one
+            // Member create kare agar exist na kare
             member = new Member();
             member.setName("Test User1");
             member.setEmail(testEmail);
@@ -44,13 +43,12 @@ public class TestMemberCreator implements CommandLineRunner {
             memberRepository.save(member);
             System.out.println("✅ Test member created for mail scheduler!");
         } else {
-            // Pick the first member if duplicates exist
             member = members.get(0);
             System.out.println("ℹ️ Test member already exists. Using the first one.");
         }
 
-        // Send test fee due email
+        // Email bhej do
         mailService.sendExpiryMail(member);
-        System.out.println("📧 Test fee due mail sent!");
+        System.out.println("call kr");
     }
 }

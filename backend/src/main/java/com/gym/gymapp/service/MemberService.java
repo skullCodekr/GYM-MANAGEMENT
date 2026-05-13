@@ -35,7 +35,7 @@ public class MemberService {
         if (updated.getPhone() != null) member.setPhone(updated.getPhone());
 
         // 🔥 FIXED PART (PHOTO ISSUE)
-        if (updated.getPhotoUrl() != null && !updated.getPhotoUrl().isBlank()) {
+        if (updated.getPhotoUrl() != null && !updated.getPhotoUrl().isEmpty()) {
             member.setPhotoUrl(updated.getPhotoUrl());
         }
 

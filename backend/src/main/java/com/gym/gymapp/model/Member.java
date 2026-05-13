@@ -1,3 +1,4 @@
+
 package com.gym.gymapp.model;
 
 import jakarta.persistence.*;

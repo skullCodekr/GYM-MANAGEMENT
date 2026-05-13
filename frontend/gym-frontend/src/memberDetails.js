@@ -1,7 +1,8 @@
-// MemberDetails.js
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+
+const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080";
 
 function MemberDetails() {
   const { id } = useParams();
@@ -13,13 +14,14 @@ function MemberDetails() {
   const [photoFile, setPhotoFile] = useState(null);
   const [error, setError] = useState(null);
 
+  // ===================== FETCH MEMBER =====================
   useEffect(() => {
     fetchMember();
   }, [id]);
 
   const fetchMember = async () => {
     try {
-      const res = await axios.get(`http://localhost:8080/api/members/${id}`);
+      const res = await axios.get(`${BASE_URL}/api/members/${id}`);
       setMember(res.data);
       setEditData({
         name: res.data.name || "",
@@ -34,34 +36,35 @@ function MemberDetails() {
     }
   };
 
+  // ===================== UPDATE MEMBER =====================
   const handleUpdate = async () => {
     try {
       // 1️⃣ Update text fields
-      await axios.put(`http://localhost:8080/api/members/${id}`, editData);
+      await axios.put(`${BASE_URL}/api/members/${id}`, editData);
 
       // 2️⃣ Upload photo if selected
       if (photoFile) {
         const formData = new FormData();
         formData.append("file", photoFile);
-        await axios.post(
-          `http://localhost:8080/api/members/${id}/upload`,
-          formData,
-          { headers: { "Content-Type": "multipart/form-data" } },
-        );
+
+        await axios.post(`${BASE_URL}/api/members/${id}/upload`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
       }
 
       alert("Member updated!");
       setIsEditing(false);
       setPhotoFile(null);
-      fetchMember(); // refresh data including photo
+      fetchMember(); // Refresh data
     } catch (err) {
-      console.log(err);
-      alert("Update failed");
+      console.error(err);
+      alert(err.response?.data || "Update failed");
     }
   };
 
   if (error)
     return <h2 style={{ color: "red", textAlign: "center" }}>{error}</h2>;
+
   if (!member)
     return <h2 style={{ textAlign: "center" }}>Loading member...</h2>;
 
@@ -78,7 +81,7 @@ function MemberDetails() {
       <div style={{ textAlign: "center" }}>
         {member.photoUrl && !photoFile && (
           <img
-            src={`http://localhost:8080${member.photoUrl}`}
+            src={member.photoUrl} // ✅ Supabase public URL
             alt="Member"
             style={{
               width: "120px",
@@ -89,6 +92,7 @@ function MemberDetails() {
             }}
           />
         )}
+
         {photoFile && (
           <img
             src={URL.createObjectURL(photoFile)}
@@ -102,6 +106,7 @@ function MemberDetails() {
             }}
           />
         )}
+
         {isEditing && (
           <input
             type="file"
@@ -133,7 +138,11 @@ function MemberDetails() {
 
         <p>
           <strong>Fee Status:</strong>{" "}
-          <span style={{ color: member.feeStatus === "DUE" ? "red" : "green" }}>
+          <span
+            style={{
+              color: member.feeStatus === "DUE" ? "red" : "green",
+            }}
+          >
             {member.feeStatus}
           </span>
         </p>

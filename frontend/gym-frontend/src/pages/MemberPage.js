@@ -9,19 +9,21 @@ const MembersPage = () => {
     email: "",
     phone: "",
   });
+  const [photoFile, setPhotoFile] = useState(null);
 
   const [editMember, setEditMember] = useState(null);
   const navigate = useNavigate();
 
   const API = "http://localhost:8080/api/members";
 
-  // ===================== FETCH ALL =====================
+  // ===================== FETCH ALL MEMBERS =====================
   const loadMembers = async () => {
     try {
       const res = await axios.get(API);
       setMembers(res.data);
     } catch (err) {
       console.log("Error fetching members:", err);
+      alert("Failed to load members. Check backend!");
     }
   };
 
@@ -32,26 +34,28 @@ const MembersPage = () => {
   // ===================== ADD MEMBER =====================
   const addMember = async () => {
     if (!newMember.name.trim() || !newMember.phone.trim()) {
-      alert("Fill all fields!");
+      alert("Fill all required fields!");
       return;
     }
 
     try {
-      await axios.post(API, newMember);
+      const formData = new FormData();
+      formData.append("name", newMember.name);
+      formData.append("email", newMember.email || "");
+      formData.append("phone", newMember.phone);
+      if (photoFile) formData.append("photo", photoFile); // optional photo
+
+      await axios.post(API, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
       alert("Member Added!");
       loadMembers();
       setNewMember({ name: "", email: "", phone: "" });
+      setPhotoFile(null);
     } catch (err) {
       console.log("Backend error detail:", err);
-      if (err.response && typeof err.response.data === "string") {
-        alert(err.response.data);
-        return;
-      }
-      if (err.response && err.response.data && err.response.data.message) {
-        alert(err.response.data.message);
-        return;
-      }
-      alert(err.message || "Something went wrong!");
+      alert(err.response?.data || err.message);
     }
   };
 
@@ -63,22 +67,29 @@ const MembersPage = () => {
       loadMembers();
     } catch (err) {
       console.log("Error deleting member:", err);
+      alert("Failed to delete member");
     }
   };
 
   // ===================== UPDATE MEMBER =====================
   const updateMember = async () => {
     try {
+      // Update member data (name, email, phone)
       await axios.put(`${API}/${editMember.id}`, editMember);
+
+      // Upload new photo separately if selected
+      if (editMember.photoFile) {
+        const formData = new FormData();
+        formData.append("file", editMember.photoFile);
+        await axios.post(`${API}/${editMember.id}/upload`, formData);
+      }
+
       alert("Member updated!");
       setEditMember(null);
       loadMembers();
     } catch (err) {
-      if (err.response) {
-        alert(err.response.data);
-      } else {
-        alert(err.message);
-      }
+      console.log("Error updating member:", err);
+      alert(err.response?.data || err.message);
     }
   };
 
@@ -103,6 +114,11 @@ const MembersPage = () => {
         value={newMember.phone}
         onChange={(e) => setNewMember({ ...newMember, phone: e.target.value })}
       />
+      <input
+        type="file"
+        accept="image/*"
+        onChange={(e) => setPhotoFile(e.target.files[0])}
+      />
       <button onClick={addMember}>Add</button>
 
       <br />
@@ -121,6 +137,7 @@ const MembersPage = () => {
               <th>Name</th>
               <th>Email</th>
               <th>Phone</th>
+              <th>Photo</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -133,14 +150,29 @@ const MembersPage = () => {
                 <td>{m.email}</td>
                 <td>{m.phone}</td>
                 <td>
+                  {m.photoUrl ? (
+                    <img
+                      src={`http://localhost:8080${m.photoUrl}`}
+                      alt={m.name}
+                      style={{
+                        width: "50px",
+                        height: "50px",
+                        objectFit: "cover",
+                      }}
+                    />
+                  ) : (
+                    "No Photo"
+                  )}
+                </td>
+                <td>
                   <button
-                    style={{ marginRight: "1px" }}
+                    style={{ marginRight: "5px" }}
                     onClick={() => setEditMember(m)}
                   >
                     Edit
                   </button>
                   <button
-                    style={{ marginRight: "1px" }}
+                    style={{ marginRight: "5px" }}
                     onClick={() => deleteMember(m.id)}
                   >
                     Delete
@@ -166,7 +198,6 @@ const MembersPage = () => {
           }}
         >
           <h3>Edit Member</h3>
-
           <input
             value={editMember.name}
             onChange={(e) =>
@@ -185,7 +216,13 @@ const MembersPage = () => {
               setEditMember({ ...editMember, phone: e.target.value })
             }
           />
-
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) =>
+              setEditMember({ ...editMember, photoFile: e.target.files[0] })
+            }
+          />
           <button onClick={updateMember}>Update</button>
           <button onClick={() => setEditMember(null)}>Cancel</button>
         </div>

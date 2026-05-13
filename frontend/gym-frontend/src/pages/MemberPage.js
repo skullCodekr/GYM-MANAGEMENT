@@ -152,7 +152,7 @@ const MembersPage = () => {
                 <td>
                   {m.photoUrl ? (
                     <img
-                      src={`http://localhost:8080${m.photoUrl}`}
+                      src={m.photoUrl}
                       alt={m.name}
                       style={{
                         width: "50px",

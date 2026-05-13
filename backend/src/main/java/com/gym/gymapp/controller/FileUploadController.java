@@ -1,5 +1,5 @@
 package com.gym.gymapp.controller;
-
+import com.gym.gymapp.service.SupabaseService;
 import com.gym.gymapp.model.Member;
 import com.gym.gymapp.repository.MemberRepository;
 import com.gym.gymapp.service.SupabaseService;

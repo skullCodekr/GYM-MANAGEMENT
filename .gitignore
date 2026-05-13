@@ -12,8 +12,3 @@ target/
 .idea/
 *.iml
 
-#application.prop
-
-application.properties
-target/
-*.class

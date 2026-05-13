@@ -10,13 +10,11 @@ const MembersPage = () => {
     phone: "",
   });
   const [photoFile, setPhotoFile] = useState(null);
-
   const [editMember, setEditMember] = useState(null);
   const navigate = useNavigate();
 
-  const API = "http://localhost:8080/api/members";
+  const API = "/api/members";
 
-  // ===================== FETCH ALL MEMBERS =====================
   const loadMembers = async () => {
     try {
       const res = await axios.get(API);
@@ -31,7 +29,6 @@ const MembersPage = () => {
     loadMembers();
   }, []);
 
-  // ===================== ADD MEMBER =====================
   const addMember = async () => {
     if (!newMember.name.trim() || !newMember.phone.trim()) {
       alert("Fill all required fields!");
@@ -43,11 +40,18 @@ const MembersPage = () => {
       formData.append("name", newMember.name);
       formData.append("email", newMember.email || "");
       formData.append("phone", newMember.phone);
-      if (photoFile) formData.append("photo", photoFile); // optional photo
 
-      await axios.post(API, formData, {
+      const response = await axios.post(API, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
+
+      if (photoFile && response.data.id) {
+        const photoData = new FormData();
+        photoData.append("file", photoFile);
+        await axios.post(`${API}/${response.data.id}/upload`, photoData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+      }
 
       alert("Member Added!");
       loadMembers();
@@ -59,7 +63,6 @@ const MembersPage = () => {
     }
   };
 
-  // ===================== DELETE MEMBER =====================
   const deleteMember = async (id) => {
     try {
       await axios.delete(`${API}/${id}`);
@@ -71,13 +74,10 @@ const MembersPage = () => {
     }
   };
 
-  // ===================== UPDATE MEMBER =====================
   const updateMember = async () => {
     try {
-      // Update member data (name, email, phone)
       await axios.put(`${API}/${editMember.id}`, editMember);
 
-      // Upload new photo separately if selected
       if (editMember.photoFile) {
         const formData = new FormData();
         formData.append("file", editMember.photoFile);
@@ -97,7 +97,6 @@ const MembersPage = () => {
     <div style={{ padding: "20px" }}>
       <h2>Gym Members</h2>
 
-      {/* ============ ADD MEMBER FORM ============ */}
       <h3>Add Member</h3>
       <input
         placeholder="Name"
@@ -124,7 +123,6 @@ const MembersPage = () => {
       <br />
       <br />
 
-      {/* ============ MEMBERS TABLE ============ */}
       <h3>All Members</h3>
 
       {members.length === 0 ? (
@@ -141,7 +139,6 @@ const MembersPage = () => {
               <th>Actions</th>
             </tr>
           </thead>
-
           <tbody>
             {members.map((m) => (
               <tr key={m.id}>
@@ -154,32 +151,16 @@ const MembersPage = () => {
                     <img
                       src={m.photoUrl}
                       alt={m.name}
-                      style={{
-                        width: "50px",
-                        height: "50px",
-                        objectFit: "cover",
-                      }}
+                      style={{ width: "50px", height: "50px", objectFit: "cover" }}
                     />
                   ) : (
                     "No Photo"
                   )}
                 </td>
                 <td>
-                  <button
-                    style={{ marginRight: "5px" }}
-                    onClick={() => setEditMember(m)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    style={{ marginRight: "5px" }}
-                    onClick={() => deleteMember(m.id)}
-                  >
-                    Delete
-                  </button>
-                  <button onClick={() => navigate(`/members/${m.id}`)}>
-                    View Details
-                  </button>
+                  <button style={{ marginRight: "5px" }} onClick={() => setEditMember(m)}>Edit</button>
+                  <button style={{ marginRight: "5px" }} onClick={() => deleteMember(m.id)}>Delete</button>
+                  <button onClick={() => navigate(`/members/${m.id}`)}>View Details</button>
                 </td>
               </tr>
             ))}
@@ -187,42 +168,13 @@ const MembersPage = () => {
         </table>
       )}
 
-      {/* ============ UPDATE POPUP FORM ============ */}
       {editMember && (
-        <div
-          style={{
-            marginTop: "20px",
-            padding: "20px",
-            border: "2px solid gray",
-            width: "300px",
-          }}
-        >
+        <div style={{ marginTop: "20px", padding: "20px", border: "2px solid gray", width: "300px" }}>
           <h3>Edit Member</h3>
-          <input
-            value={editMember.name}
-            onChange={(e) =>
-              setEditMember({ ...editMember, name: e.target.value })
-            }
-          />
-          <input
-            value={editMember.email}
-            onChange={(e) =>
-              setEditMember({ ...editMember, email: e.target.value })
-            }
-          />
-          <input
-            value={editMember.phone}
-            onChange={(e) =>
-              setEditMember({ ...editMember, phone: e.target.value })
-            }
-          />
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) =>
-              setEditMember({ ...editMember, photoFile: e.target.files[0] })
-            }
-          />
+          <input value={editMember.name} onChange={(e) => setEditMember({ ...editMember, name: e.target.value })} />
+          <input value={editMember.email} onChange={(e) => setEditMember({ ...editMember, email: e.target.value })} />
+          <input value={editMember.phone} onChange={(e) => setEditMember({ ...editMember, phone: e.target.value })} />
+          <input type="file" accept="image/*" onChange={(e) => setEditMember({ ...editMember, photoFile: e.target.files[0] })} />
           <button onClick={updateMember}>Update</button>
           <button onClick={() => setEditMember(null)}>Cancel</button>
         </div>

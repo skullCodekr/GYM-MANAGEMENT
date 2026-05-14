@@ -1,0 +1,42 @@
+[33m1fb6d18[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m Update gitignore
+[33m2e6ece5[m Initial commit
+[33m0a16375[m remove credentials
+[33m4d9ffd4[m chatbot integrated using grok api
+[33m9c08583[m[33m ([m[1;31morigin/main[m[33m)[m update frontend build in static
+[33m2e8b92a[m Update memberDetails.js
+[33m9b1edcf[m Update MemberPage.js setting api
+[33m2aacd20[m Update MemberPage.js
+[33m475dbb4[m Update application.properties
+[33m3b0e8d0[m fix hikari pool size
+[33m0916601[m add application properties
+[33mf466e61[m add SupabaseService
+[33m61b3d78[m finally supabase integrated and working properly even the crud functionality is properly working able to add member-photos on supabase . :)
+[33mdbf7b75[m last try fir sone ja rha network eroor resolve
+[33m4efad52[m Fix member photo disappearing on update
+[33mdcd6c21[m color chuange on hover updated react
+[33ma4be187[m color chuange on hover updated react
+[33mfb22dc3[m Fix React routing: BrowserRouter → HashRouter for deployment
+[33m3df7fa9[m Update WebConfig and application.properties for React Router fallback
+[33mcd1e888[m Update WebConfig for React Router fallback
+[33m06178fd[m Update WebConfig for React Router fallback
+[33m4efd727[m Fix frontend folder structure for React build
+[33m2717176[m Update EmailService to match Member.java fields
+[33m6cb5f14[m Added frontend static content
+[33m6512785[m Deployed frontend with backend and added static resources
+[33m5ea6855[m Build success + fixes
+[33m559c473[m Fix Lombok dependency
+[33m4bc75c1[m Replace backend with new version
+[33mce9fdd0[m Add jar and Dockerfile for Render deployment
+[33m98e6482[m Add jar and Dockerfile for Render deployment
+[33m43a7248[m Replace old backend with new backend, keeping local folder intact
+[33m559a254[m Fix Dockerfile using Amazon Corretto Java 17
+[33m6d8f396[m Fix Dockerfile base image for Render
+[33mdae500a[m Final backend Dockerfile for Render
+[33m2fc2220[m Remove root Dockerfile
+[33m8ee77ad[m Remove root Dockerfile, keep backend Dockerfile
+[33m386a151[m Final Dockerfile for Render deployment
+[33m37ab45b[m Update Dockerfile for Render deployment
+[33m6f986d8[m Add Dockerfile for Render deployment
+[33mca3be10[m updated project for deployment
+[33mb805848[m Update README.md
+[33m195c625[m Initial commit - Gym Management project
